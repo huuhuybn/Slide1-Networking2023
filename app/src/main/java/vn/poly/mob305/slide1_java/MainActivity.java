@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,57 +15,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AsyncTask task1 = new AsyncTask() {
+        MyAsyncTask myAsyncTask = new MyAsyncTask();
+        myAsyncTask.setListener(new MyListener() {
             @Override
-            protected Object doInBackground(Object[] objects) {
-                // cau lenh viet trong nay !!!!
-                // Main Thread
-                int x = 10;
-                for (int i = 0; i < 10000000; i++) {
-                    x++;
-                }
-                return String.valueOf(x);
+            public void onUpdate(int progress) {
+                Toast.makeText(MainActivity.this,"Progress " + progress,
+                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            protected void onPostExecute(Object text) {
-                super.onPostExecute(text);
-                TextView tvText1 = findViewById(R.id.tvText1);
-                tvText1.setText((String) text);
-            }
-        };
-        task1.execute();// thuc thi luong nay
-
-        AsyncTask task2 = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                int y = 10;
-                for (int i = 0; i < 10000; i++) {
-                    y++;
-                }
-                // tuong tac vs main thread -> error
-                return String.valueOf(y);
+            public void onFinished(String result) {
+                Toast.makeText(MainActivity.this,"Finished",
+                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                TextView tvText2 = findViewById(R.id.tvText2);
-                tvText2.setText(String.valueOf(o));
+            public void onStart() {
+                Toast.makeText(MainActivity.this,"Starting...",
+                        Toast.LENGTH_SHORT).show();
             }
-        };
-        task2.execute();
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // thuc hien 1 task sau thoi  gian la 2000 milisecond
-            }
-        },2000);
-
-
-
+        });
+        myAsyncTask.execute("TEST"); // bat dau chay
     }
 
 }
