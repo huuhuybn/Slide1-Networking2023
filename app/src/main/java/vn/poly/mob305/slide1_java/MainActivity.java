@@ -10,32 +10,31 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    String api = "https://jsonplaceholder.typicode.com/todos/1";
+    String apiPost = "https://jsonplaceholder.typicode.com/posts";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        MyAsyncTask myAsyncTask = new MyAsyncTask();
-        myAsyncTask.setListener(new MyListener() {
+        GetAsyncTask asyncTask = new GetAsyncTask();
+        asyncTask.setMyListener(new MyListener() {
             @Override
             public void onUpdate(int progress) {
-                Toast.makeText(MainActivity.this,"Progress " + progress,
-                        Toast.LENGTH_SHORT).show();
+                // chua thiet lap nen chua chay 1!!!!!
             }
 
             @Override
             public void onFinished(String result) {
-                Toast.makeText(MainActivity.this,"Finished",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onStart() {
-                Toast.makeText(MainActivity.this,"Starting...",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Starting...", Toast.LENGTH_SHORT).show();
             }
         });
-        myAsyncTask.execute("TEST"); // bat dau chay
+        asyncTask.execute(apiPost,"POST");
     }
 
 }
