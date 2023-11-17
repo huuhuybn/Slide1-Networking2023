@@ -9,7 +9,15 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViewById(R.id.btnRequest).setOnClickListener(v ->{
-            Retrofit retrofit = new Retrofit.Builder()
+        /*    Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://api.randomuser.me/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
@@ -72,17 +80,47 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this,
                             t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+            });*/
+            String url = " ";
+            RequestQueue queue = Volley.newRequestQueue(this);
+            GsonRequest<Root> rootGsonRequest = new GsonRequest<>(url, Root.class,
+                    null,
+                    response -> {
+                        Toast.makeText(this,"" + response.getResults().size()
+                                , Toast.LENGTH_SHORT).show();
+            }, error -> {
+                new Throwable(error);
             });
-
-
-
+            queue.add(rootGsonRequest);
         });
         findViewById(R.id.btnReq2).setOnClickListener(v->{
            /* String api = "https://jsonplaceholder.typicode.com/todos/1";
             // https://jsonplaceholder.typicode.com : base_url
             // todos : path : địa chỉ - đường dẫn
             // 1 : path*/
-            Retrofit retrofit = new Retrofit.Builder()
+
+            RequestQueue queue = Volley.newRequestQueue(this);
+            String url = "https://jsonplaceholder.typicode.com/todos/1";
+            StringRequest request = new StringRequest(Request.Method.GET, url,
+                    response -> {
+
+                        try {
+                            JSONObject root = new JSONObject(response);
+                            String userId = root.getString("userId");
+                            String title = root.getString("title");
+                            Toast.makeText(this, title, Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }, error -> {
+                        Toast.makeText(this, error.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    });
+            queue.add(request);
+
+
+           /* Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://jsonplaceholder.typicode.com/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
@@ -105,12 +143,12 @@ public class MainActivity extends AppCompatActivity {
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Log.e("FAIL",t.getMessage());
                 }
-            });
+            });*/
 
 
         });
         findViewById(R.id.btnPost).setOnClickListener(v->{
-            Retrofit retrofit = new Retrofit.Builder()
+           /* Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://jsonplaceholder.typicode.com/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
@@ -133,7 +171,47 @@ public class MainActivity extends AppCompatActivity {
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Log.e("LOI",t.getMessage());
                 }
-            });
+            });*/
+
+            String urlPost = "https://jsonplaceholder.typicode.com/posts";
+            JSONObject user = new JSONObject();
+            try {
+                user.put("userId", 199);
+                user.put("body","Hello");
+                user.put("title","Greetings");
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            StringRequest request = new StringRequest(Request.Method.POST,
+                    urlPost,
+                    response ->{
+                        Toast.makeText(this, response.toString(),
+                                Toast.LENGTH_SHORT).show();
+                        Log.e("AA",response.toString());
+                    }
+                    ,error -> {
+                Log.e("ddd",error.getMessage());
+                Toast.makeText(this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }){
+                @Override
+                public String getBodyContentType() {
+                    return "application/x-www-form-urlencoded; charset=utf-8";
+                }
+
+                @Override
+                public byte[] getBody() {
+                    String json = "{\n" +
+                            "    title: 'foo',\n" +
+                            "    body: 'bar',\n" +
+                            "    userId: 1,\n" +
+                            "  }";
+                    return json.getBytes();
+                }
+            };
+
+            RequestQueue queue = Volley.newRequestQueue(this);
+            queue.add(request);
+
 
 
         });

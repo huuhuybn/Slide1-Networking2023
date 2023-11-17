@@ -31,7 +31,4 @@ public interface RandomService {
     Call<ResponseBody> sendUser(@Field("userId") int userId,
                                 @Field("body") String body,
                                 @Field("title") String title);
-
-
-
 }
