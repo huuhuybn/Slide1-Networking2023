@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/imgAvatar"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"/>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/imgFresco"
+        app:placeholderImage="@mipmap/ic_launcher"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
     <Button
         android:id="@+id/btnRequest"
         android:text="Request"

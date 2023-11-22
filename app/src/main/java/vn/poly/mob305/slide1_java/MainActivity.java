@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +17,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.core.ImageTranscoderType;
+import com.facebook.imagepipeline.core.MemoryChunkType;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,12 +62,59 @@ public class MainActivity extends AppCompatActivity {
     // BASE_URL : https://api.randomuser.me/
     // Params : results = 10 : query param !!!
 
+    // Ảnh
+    // định dạng ảnh khác nhau png, jpg, jpge, gif ... Android đều hỗ trợ hiển thị
+    // các định ảnh phổ biến - raw - tuỳ máy . -> sử dụng phần mềm riêng hỗ codedex
+    // url : online
+    // uri : trên thiết bị
+
+    //
+    String imageUrl = "https://icdn.dantri.com.vn/2023/07/06/2-o-to-dien-mini-trung-quoc-gia-gan-100-trieu-dong-1688644420763.jpg?watermark=true";
+    String imageUri = "/storageSD/data/....";
+    String gif = "https://media.tenor.com/D0tvez1eig0AAAAC/xe-%C3%B4t%C3%B4.gif";
+
+    String imageLarge = "https://cdn.wallpapersafari.com/70/15/z8FJ5v.jpg";
+    // code thuần : bitmap -> ImageView !!!
+    // Thư viện :
+    // Picasso - Square (Retrofit)
+    // Glide - Google
+    // Fresco - FB
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        SimpleDraweeView img = findViewById(R.id.imgFresco);
+        DraweeController controller = Fresco
+                .newDraweeControllerBuilder()
+                .setUri(gif)
+                .setAutoPlayAnimations(true)
+                .build();
+        img.setController(controller);
+
+
+
+        ImageView imgAvatar = findViewById(R.id.imgAvatar);
+//        Picasso.get().load(gif).centerCrop()
+//                .resize(200,200).
+//                placeholder(R.drawable.ic_launcher_background)
+//                .into(imgAvatar);
+
+        Glide.with(this).load(gif).
+                placeholder(R.drawable.ic_launcher_background)
+                .into(imgAvatar);
+
+
+
+
+
         findViewById(R.id.btnRequest).setOnClickListener(v ->{
+
+
+
+
         /*    Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://api.randomuser.me/")
                     .addConverterFactory(GsonConverterFactory.create())
@@ -81,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                             t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });*/
-            String url = " ";
+          /*  String url = " ";
             RequestQueue queue = Volley.newRequestQueue(this);
             GsonRequest<Root> rootGsonRequest = new GsonRequest<>(url, Root.class,
                     null,
@@ -91,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             }, error -> {
                 new Throwable(error);
             });
-            queue.add(rootGsonRequest);
+            queue.add(rootGsonRequest);*/
         });
         findViewById(R.id.btnReq2).setOnClickListener(v->{
            /* String api = "https://jsonplaceholder.typicode.com/todos/1";
