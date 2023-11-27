@@ -1,11 +1,15 @@
 package vn.poly.mob305.slide1_java;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,10 +45,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import vn.poly.mob305.slide1_java.databinding.ActivityMainBinding;
 import vn.poly.mob305.slide1_java.json.Info;
 import vn.poly.mob305.slide1_java.json.Result;
 import vn.poly.mob305.slide1_java.json.Root;
 import vn.poly.mob305.slide1_java.retrofit.RandomService;
+import vn.poly.mob305.slide1_java.viewmodel.CountViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,24 +85,47 @@ public class MainActivity extends AppCompatActivity {
     // Picasso - Square (Retrofit)
     // Glide - Google
     // Fresco - FB
+    // ViewModel
+    // DataBinding : cơ chế đưa dữ liệu vào xml ko cần findViewByID
+    // LiveData
+    // Android Room ~ Sqlite
+    // Android Jetpack !!!!
 
+    CountViewModel countViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+        // Thay vì sử dụng setContentView, sử dụng DataBindingUtil để gán layout
+        ActivityMainBinding binding = DataBindingUtil
+                .setContentView(this, R.layout.activity_main);
+        User user1 = new User();
+        user1.mssv = 111;
+        user1.name = "HUY";
+        user1.address = "BN";
+
+        countViewModel = new ViewModelProvider(this).get(CountViewModel.class);
 
 
-        SimpleDraweeView img = findViewById(R.id.imgFresco);
+        binding.setUser(user1);// thay thế cho findviewID và setText
+
+        binding.btnUpdate.setOnClickListener(v ->{
+            countViewModel.incrementClickCount();
+        });
+        // lắng nghe mỗi khi biến count đc cập nhật
+        // listener này có thể gọi ở bất kì đâu trên MainActivity!!!!
+        countViewModel.getClickCountLiveData().observe(this, integer -> {
+            Toast.makeText(this, String.valueOf(integer),
+                    Toast.LENGTH_SHORT).show();
+        });
+
         DraweeController controller = Fresco
                 .newDraweeControllerBuilder()
                 .setUri(gif)
                 .setAutoPlayAnimations(true)
                 .build();
-        img.setController(controller);
+        binding.imgFresco.setController(controller);
 
-
-
-        ImageView imgAvatar = findViewById(R.id.imgAvatar);
 //        Picasso.get().load(gif).centerCrop()
 //                .resize(200,200).
 //                placeholder(R.drawable.ic_launcher_background)
@@ -104,16 +133,9 @@ public class MainActivity extends AppCompatActivity {
 
         Glide.with(this).load(gif).
                 placeholder(R.drawable.ic_launcher_background)
-                .into(imgAvatar);
+                .into(binding.imgAvatar);
 
-
-
-
-
-        findViewById(R.id.btnRequest).setOnClickListener(v ->{
-
-
-
+        binding.btnRequest.setOnClickListener(v ->{
 
         /*    Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://api.randomuser.me/")

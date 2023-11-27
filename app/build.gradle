@@ -3,6 +3,9 @@ plugins {
 }
 
 android {
+    buildFeatures {
+        dataBinding true
+    }
     namespace 'vn.poly.mob305.slide1_java'
     compileSdk 33
 
